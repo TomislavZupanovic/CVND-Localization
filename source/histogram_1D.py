@@ -1,4 +1,6 @@
 from itertools import zip_longest
+import matplotlib.pyplot as plt
+import numpy as np
 
 
 class Filter1D(object):
@@ -25,7 +27,9 @@ class Filter1D(object):
             index = (idx - motion) % len(self.prob_dist)
             prev_index = (index - 1) % len(self.prob_dist)
             next_index = (index + 1) % len(self.prob_dist)
+            # 0.8 is probability factor for exact index
             value = 0.8 * self.prob_dist[index]
+            # 0.1 is probability factor for overshoot and undershoot indexes
             value = value + 0.1 * self.prob_dist[next_index]
             value = value + 0.1 * self.prob_dist[prev_index]
             moved_dist.append(value)
@@ -56,3 +60,18 @@ class Filter1D(object):
                     # Do remaining measurement
                     self.move(measurement)
 
+    def display_map(self, bar_width=1):
+        """ Plots the probability distribution of 1D environment """
+        if len(self.prob_dist) > 0:
+            x = range(len(self.prob_dist))
+            plt.bar(x, height=self.prob_dist, bar_width=bar_width, color='brown')
+            plt.ylim(0, 1)
+            plt.xlabel('Grid Cell')
+            plt.ylabel('Probability')
+            plt.title('Probability of the object being at each cell in the grid')
+            plt.xticks(np.arange(min(self.prob_dist), max(self.prob_dist) + 1, 1))
+            if len(self.prob_dist) <= 10:
+                print(round(self.prob_dist), 3)
+            plt.show()
+        else:
+            raise ValueError('Probability distribution is empty.')
