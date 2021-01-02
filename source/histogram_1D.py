@@ -5,9 +5,10 @@ import numpy as np
 
 class Filter1D(object):
     """ Represents the measure and move Filter in 1D environment that maps probability distributions """
-    def __init__(self, world, prior):
+    def __init__(self, world):
         self.world = world
-        self.prob_dist = prior
+        # Initialize prior uniform distribution
+        self.prob_dist = [1/len(world)] * len(world)
         self.prob_hit = 0.6
         self.prob_miss = 0.2
 
@@ -18,7 +19,7 @@ class Filter1D(object):
         self.prob_dist = [prob * self.prob_hit if measurement == color else prob * self.prob_miss
                           for prob, color in zip(self.prob_dist, self.world)]
         # Normalize posterior probabilities
-        self.prob_dist = [prob / sum(prob) for prob in self.prob_dist]
+        self.prob_dist = [prob / sum(self.prob_dist) for prob in self.prob_dist]
 
     def move(self, motion):
         """ Moves the object in environment with given motion factor and adds uncertainty around expected position"""
@@ -64,14 +65,15 @@ class Filter1D(object):
         """ Plots the probability distribution of 1D environment """
         if len(self.prob_dist) > 0:
             x = range(len(self.prob_dist))
-            plt.bar(x, height=self.prob_dist, bar_width=bar_width, color='brown')
+            plt.bar(x, height=self.prob_dist, width=bar_width, color='brown')
             plt.ylim(0, 1)
             plt.xlabel('Grid Cell')
             plt.ylabel('Probability')
-            plt.title('Probability of the object being at each cell in the grid')
-            plt.xticks(np.arange(min(self.prob_dist), max(self.prob_dist) + 1, 1))
+            plt.title('Probability of the object being at each position')
+            plt.xticks(np.arange(min(x), max(x) + 1, 1))
             if len(self.prob_dist) <= 10:
-                print(round(self.prob_dist), 3)
+                rounded_dist = [round(element, 3) for element in self.prob_dist]
+                print('Probability distribution: \n', rounded_dist)
             plt.show()
         else:
             raise ValueError('Probability distribution is empty.')
