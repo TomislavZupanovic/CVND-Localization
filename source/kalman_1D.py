@@ -57,7 +57,7 @@ class Kalman1D(object):
 
     def display_distribution(self):
         """ Plots the probability distribution of object location """
-        x_axis = np.arange(-20, 30, 0.1)
+        x_axis = np.arange(-30, 30, 0.1)
         distribution = []
         for x in x_axis:
             distribution.append(self.gaussian(x))
