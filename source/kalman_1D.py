@@ -61,6 +61,7 @@ class Kalman1D(object):
         distribution = []
         for x in x_axis:
             distribution.append(self.gaussian(x))
+        print(f'Gaussian Distribution: \nMean: {round(self.mean, 2)} Variance: {round(self.var, 2)}')
         plt.plot(x_axis, distribution, color='brown')
         plt.title('Probability distribution of object location')
         plt.xlabel('Location')
